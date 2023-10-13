@@ -1,27 +1,28 @@
 import os
 import time
+import json
 from colorama import Fore, Style, init, Back
 
 init(autoreset=True)
 
 class Main:
     def __init__(self):
-        self.user = {
-            'login': 'user1',
-            'password': 'Qwerty',
-            'pin': '1234'
-        }
-        self.admin = {
-            'login': 'admin',
-            'password': 'Qwerty',
-            'pin': '1234'
-        }
+        self.users = {}
         self.tries = 0
+    def load_users(self):
+        if os.path.exists['users.json']:
+            with open('users.json', 'r') as file:
+                self.users = json.load(file)
+    def save_users(self):
+        with open('users.json', 'w') as file:
+            json.dump(self.users, file, ident= 4)
+
     def login_window(self):
         user_login = input(f"{Fore.GREEN}Enter your login:{Style.RESET_ALL} ")
-        if user_login == self.user['login'] or user_login == self.admin['login']:
+        if user_login == self.users:
+            user_data = self.users[user_login]
             self.tries = 0
-            self.pass_window()
+            self.pass_window(user_data)
         else:
             self.tries += 1
             print(f"{Fore.RED}Incorrect, try to repeat ({self.tries} / 3){Style.RESET_ALL}")
@@ -32,14 +33,14 @@ class Main:
             self.login_window()
 
 
-    def pass_window(self):
+    def pass_window(self,user_data):
         user_password = input(f"{Fore.GREEN}Enter your password:{Style.RESET_ALL} ")
-        if user_password == self.user['password'] or user_password == self.admin['password']:
+        if user_password == self.user_data['password']:
             self.tries = 0
-            if str(self.user['pin']) == str("") or str(self.admin['pin']) == str(""):
-                pass
+            if self.user_data['role'] == 'admin':
+                self.admin_menu()
             else:
-                self.pin_window()
+                self.user_menu(user_data)
             
         else:
             self.tries += 1
